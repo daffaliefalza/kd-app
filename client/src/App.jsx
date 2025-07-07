@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import PostForm from "./pages/PostForm";
 import PostDetail from "./pages/PostDetail";
 import { AuthProvider } from "./AuthContext";
+import Post from "./pages/Post";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/posts" element={<Post />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/new" element={<PostForm />} />
