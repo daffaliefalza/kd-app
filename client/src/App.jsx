@@ -7,6 +7,7 @@ import PostForm from "./pages/PostForm";
 import PostDetail from "./pages/PostDetail";
 import { AuthProvider } from "./AuthContext";
 import Post from "./pages/Post";
+import Footer from "./components/Footer";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/new" element={<PostForm />} />
           <Route path="/posts/:id" element={<PostDetail />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </AuthProvider>
   );
