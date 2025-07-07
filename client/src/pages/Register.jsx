@@ -17,17 +17,20 @@ export default function Register() {
     <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto">
       <h2 className="text-xl mb-4">Register</h2>
       <input
+        required
         className="w-full mb-2 p-2 border"
         placeholder="Username"
         onChange={(e) => setForm({ ...form, username: e.target.value })}
       />
       <input
+        required
         className="w-full mb-2 p-2 border"
         type="email"
         placeholder="Email"
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
       <input
+        required
         className="w-full mb-2 p-2 border"
         type="password"
         placeholder="Password"
