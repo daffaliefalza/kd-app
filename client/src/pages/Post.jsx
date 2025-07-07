@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../api";
+import { useAuth } from "../AuthContext";
 
 export default function Post() {
+  const { user } = useAuth(); // Get user authentication status
   const [posts, setPosts] = useState([]);
   const [allPosts, setAllPosts] = useState([]);
   const [page, setPage] = useState(1);
@@ -50,12 +52,14 @@ export default function Post() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">All Posts</h1>
-        <Link
-          to="/new"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          Create New Post
-        </Link>
+        {user && ( // Only show this button if user is logged in
+          <Link
+            to="/new"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            Create New Post
+          </Link>
+        )}
       </div>
 
       <div className="mb-8">

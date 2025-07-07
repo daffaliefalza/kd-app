@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     const res = await API.post("/auth/login", form);
     login(res.data.username, res.data.token);
-    navigate("/");
+    navigate("/posts");
   };
 
   return (
