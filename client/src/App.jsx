@@ -8,6 +8,7 @@ import PostDetail from "./pages/PostDetail";
 import { AuthProvider } from "./AuthContext";
 import Post from "./pages/Post";
 import Footer from "./components/Footer";
+import LoginSuccess from "./pages/LoginSuccess";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/new" element={<PostForm />} />
           <Route path="/posts/:id" element={<PostDetail />} />
+          <Route path="/login/success" element={<LoginSuccess />} />
         </Routes>
         <Footer />
       </BrowserRouter>

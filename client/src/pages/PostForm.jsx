@@ -9,7 +9,7 @@ export default function PostForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await API.post("/posts", post);
-    navigate("/");
+    navigate("/posts");
   };
 
   return (
@@ -53,7 +53,7 @@ export default function PostForm() {
           <div className="flex justify-end space-x-3">
             <button
               type="button"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/posts")}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel

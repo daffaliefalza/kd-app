@@ -62,7 +62,7 @@ export default function PostDetail() {
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this post?")) {
       await API.delete(`/posts/${id}`);
-      navigate("/");
+      navigate("/posts");
     }
   };
 

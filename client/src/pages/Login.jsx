@@ -71,6 +71,15 @@ export default function Login() {
           Sign In
         </button>
 
+        <button
+          onClick={() => {
+            window.location.href = "http://localhost:5000/api/auth/google";
+          }}
+          className="w-full py-2 bg-red-500 text-white rounded mt-4"
+        >
+          Continue with Google
+        </button>
+
         <div className="text-center text-sm text-gray-500">
           Don't have an account?{" "}
           <a
