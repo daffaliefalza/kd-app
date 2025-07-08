@@ -4,55 +4,73 @@ import API from "../api";
 import { useAuth } from "../AuthContext";
 
 export default function Post() {
-  const { user } = useAuth(); // Get user authentication status
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
-  const [allPosts, setAllPosts] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
-  const [filtered, setFiltered] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const POSTS_PER_PAGE = 5;
 
   useEffect(() => {
     fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    handleSearch(search);
-  }, [search, allPosts]);
-
-  useEffect(() => {
-    const start = (page - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    setPosts(filtered.slice(start, end));
-    setTotalPages(Math.ceil(filtered.length / POSTS_PER_PAGE));
-  }, [page, filtered]);
+  }, [page]); // Add page to dependencies to refetch when page changes
 
   const fetchPosts = async () => {
     try {
-      const res = await API.get("/posts?page=1&limit=1000");
-      setAllPosts(res.data.posts);
-      setSearch("");
+      setIsLoading(true);
+      const res = await API.get(`/posts?page=${page}&limit=${POSTS_PER_PAGE}`);
+      setPosts(res.data.posts);
+      setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error("Failed to fetch posts:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSearch = (term) => {
-    const lower = term.toLowerCase();
-    const filteredPosts = allPosts.filter((post) =>
-      post.title.toLowerCase().includes(lower)
-    );
-    setFiltered(filteredPosts);
-    setPage(1);
+  const handleSearch = async (term) => {
+    try {
+      setIsLoading(true);
+      const res = await API.get(
+        `/posts?search=${term}&page=1&limit=${POSTS_PER_PAGE}`
+      );
+      setPosts(res.data.posts);
+      setPage(1);
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error("Search failed:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const handlePrevious = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl text-center">
+        <p>Loading posts...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">All Posts</h1>
-        {user && ( // Only show this button if user is logged in
+        {user && (
           <Link
             to="/new"
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
@@ -66,7 +84,10 @@ export default function Post() {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            handleSearch(e.target.value);
+          }}
           placeholder="Search posts..."
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
         />
@@ -74,7 +95,9 @@ export default function Post() {
 
       {posts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No posts found.</p>
+          <p className="text-gray-500 text-lg">
+            {search ? "No matching posts found" : "No posts available"}
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -109,11 +132,23 @@ export default function Post() {
       )}
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 space-x-4 items-center">
+          <button
+            onClick={handlePrevious}
+            disabled={page === 1}
+            className={`px-4 py-2 rounded-lg ${
+              page === 1
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            } transition-colors`}
+          >
+            Previous
+          </button>
+
           <div className="flex space-x-2">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
-                key={i}
+                key={i + 1}
                 onClick={() => setPage(i + 1)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   page === i + 1
@@ -125,6 +160,18 @@ export default function Post() {
               </button>
             ))}
           </div>
+
+          <button
+            onClick={handleNext}
+            disabled={page === totalPages}
+            className={`px-4 py-2 rounded-lg ${
+              page === totalPages
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            } transition-colors`}
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
